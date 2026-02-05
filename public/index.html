@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="pt-br" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AARTI STUDIO | Visual Arts</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            purple: '#2E0249',
+                            lightPurple: '#570A57',
+                            yellow: '#F7CC02',
+                            gold: '#FFD700',
+                            dark: '#0f0518' 
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .hero-bg {
+            background: radial-gradient(circle at top right, #2E0249 0%, #0f0518 60%);
+        }
+        .card-hover:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px -5px rgba(247, 204, 2, 0.15);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* Animação do Modal */
+        @keyframes popupIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-popup {
+            animation: popupIn 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-brand-dark text-gray-100 font-sans antialiased overflow-x-hidden">
+
+    <nav class="fixed w-full z-50 bg-brand-dark/90 backdrop-blur-md border-b border-white/5 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <h1 class="font-serif text-2xl font-bold tracking-wider text-white">
+                    AARTI <span class="text-brand-yellow">STUDIO</span>
+                </h1>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="#home" class="hover:text-brand-yellow transition text-sm font-medium">Home</a>
+                        <a href="#about" class="hover:text-brand-yellow transition text-sm font-medium">Sobre Nós</a>
+                        <a href="#services" class="bg-brand-yellow text-brand-purple px-5 py-2 rounded-full font-bold hover:bg-white transition shadow-lg shadow-brand-yellow/20">
+                            Serviços e Valores
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section id="home" class="hero-bg min-h-screen flex items-center justify-center relative pt-20">
+        <div class="text-center px-4 max-w-4xl mx-auto z-10">
+            <div class="inline-block mb-4 px-4 py-1 border border-brand-yellow/30 rounded-full bg-brand-yellow/5">
+                <p class="text-brand-yellow text-xs font-bold tracking-[0.2em] uppercase animate-pulse">Desde 2023</p>
+            </div>
+            <h1 class="font-serif text-5xl md:text-7xl font-bold mb-8 leading-tight text-white drop-shadow-lg">
+                Comunicação em <br> <span class="text-brand-yellow italic">forma de arte.</span>
+            </h1>
+            <p class="text-gray-300 text-lg mb-10 font-light max-w-xl mx-auto leading-relaxed">
+                Logomarcas, identidade visual e produção de conteúdo que posicionam sua marca no topo.
+            </p>
+            
+            <a href="#services" class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-brand-purple transition-all duration-200 bg-brand-yellow font-sans rounded-full focus:outline-none hover:bg-white hover:scale-105 ring-offset-2 focus:ring-2 ring-brand-yellow">
+                Serviços e Valores
+                <i class="fas fa-arrow-down ml-2 group-hover:animate-bounce"></i>
+                <div class="absolute -inset-3 rounded-full bg-brand-yellow opacity-20 group-hover:opacity-40 blur-lg transition-opacity duration-200"></div>
+            </a>
+        </div>
+    </section>
+
+    <section id="about" class="py-24 bg-brand-dark relative border-t border-white/5">
+        <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+            <div class="relative group">
+                <div class="absolute inset-0 bg-brand-yellow rounded-lg transform translate-x-3 translate-y-3 group-hover:translate-x-2 group-hover:translate-y-2 transition"></div>
+                <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80" alt="Sobre Aarti" class="relative rounded-lg w-full object-cover grayscale hover:grayscale-0 transition duration-700 shadow-2xl h-[400px]">
+            </div>
+            <div>
+                <h2 class="font-serif text-4xl text-white mb-6">Criatividade com <br><span class="text-brand-yellow">Propósito</span></h2>
+                <p class="text-gray-400 mb-6 leading-relaxed">
+                    O AARTI STUDIO nasceu para quebrar o padrão. Desde 2023, ajudamos empresas e criadores a terem uma identidade visual que não apenas agrada aos olhos, mas converte vendas.
+                </p>
+                <div class="grid grid-cols-2 gap-4 mt-8">
+                    <div class="glass-panel p-4 rounded-lg">
+                        <i class="fas fa-palette text-brand-yellow text-2xl mb-2"></i>
+                        <h3 class="text-white font-bold">Design Único</h3>
+                    </div>
+                    <div class="glass-panel p-4 rounded-lg">
+                        <i class="fas fa-rocket text-brand-yellow text-2xl mb-2"></i>
+                        <h3 class="text-white font-bold">Alta Performance</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="py-24 bg-[#13071E]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-20">
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">Portfólio & <span class="text-brand-yellow">Valores</span></h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Escolha o pacote ideal para sua necessidade. Valores transparentes e qualidade premium.</p>
+            </div>
+
+            <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="col-span-1 md:col-span-2 lg:col-span-3 text-center py-20">
+                    <i class="fas fa-circle-notch fa-spin text-brand-yellow text-4xl"></i>
+                    <p class="mt-4 text-gray-500">Carregando serviços exclusivos...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="py-24 bg-brand-dark border-t border-white/5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-64 h-64 bg-brand-purple rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+
+        <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
+            <h2 class="font-serif text-3xl md:text-4xl text-white mb-2">Prefere um orçamento personalizado?</h2>
+            <p class="text-gray-400 mb-10">Preencha abaixo e entraremos em contato imediatamente pelo WhatsApp.</p>
+            
+            <form id="contact-form" class="glass-panel p-8 rounded-2xl text-left space-y-5 shadow-2xl">
+                <div class="grid md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="text-xs text-brand-yellow uppercase font-bold ml-1">Seu Nome</label>
+                        <input type="text" id="name" required class="w-full mt-1 bg-black/40 border border-white/10 rounded-lg p-4 text-white focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow focus:outline-none transition placeholder-gray-600" placeholder="Como podemos te chamar?">
+                    </div>
+                    <div>
+                        <label class="text-xs text-brand-yellow uppercase font-bold ml-1">WhatsApp</label>
+                        <input type="tel" id="phone" required class="w-full mt-1 bg-black/40 border border-white/10 rounded-lg p-4 text-white focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow focus:outline-none transition placeholder-gray-600" placeholder="(DDD) 99999-9999">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs text-brand-yellow uppercase font-bold ml-1">Mensagem ou Ideia</label>
+                    <textarea id="message" rows="4" class="w-full mt-1 bg-black/40 border border-white/10 rounded-lg p-4 text-white focus:border-brand-yellow focus:ring-1 focus:ring-brand-yellow focus:outline-none transition placeholder-gray-600" placeholder="Conte um pouco sobre o que você precisa..."></textarea>
+                </div>
+                <button type="submit" class="w-full bg-white text-brand-purple font-bold py-4 rounded-lg hover:bg-brand-yellow hover:scale-[1.02] transition transform duration-200 shadow-lg">
+                    Enviar Solicitação <i class="fab fa-whatsapp ml-2"></i>
+                </button>
+            </form>
+        </div>
+    </section>
+
+    <footer class="bg-black py-10 text-center border-t border-white/10">
+        <h2 class="font-serif text-xl font-bold text-white mb-4">AARTI <span class="text-brand-yellow">STUDIO</span></h2>
+        <div class="flex justify-center space-x-6 mb-6">
+            <a href="#" class="text-gray-400 hover:text-brand-yellow transition text-xl"><i class="fab fa-instagram"></i></a>
+            <a href="#" class="text-gray-400 hover:text-brand-yellow transition text-xl"><i class="fab fa-behance"></i></a>
+            <a href="#" class="text-gray-400 hover:text-brand-yellow transition text-xl"><i class="fab fa-linkedin"></i></a>
+        </div>
+        <p class="text-gray-600 text-sm">© 2025 AARTI STUDIO. Todos os direitos reservados.</p>
+    </footer>
+
+    <div id="redirect-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/95 backdrop-blur-sm transition-opacity duration-500 opacity-0">
+        <div class="bg-[#1E1129] border border-brand-yellow/30 p-10 rounded-2xl text-center max-w-md w-[90%] shadow-[0_0_60px_rgba(247,204,2,0.15)] relative transform scale-95 transition-transform duration-300">
+            <div class="absolute inset-0 bg-brand-yellow/5 rounded-2xl animate-pulse"></div>
+            
+            <div class="relative z-10">
+                <div class="w-24 h-24 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6 ring-1 ring-green-500/30">
+                    <i class="fab fa-whatsapp text-5xl text-green-500 animate-[bounce_2s_infinite]"></i>
+                </div>
+                
+                <h3 class="text-3xl font-serif font-bold text-white mb-3">Recebemos seu pedido!</h3>
+                <p class="text-gray-300 mb-8 leading-relaxed">
+                    Estamos abrindo seu WhatsApp para conectar você diretamente com nossa equipe criativa.
+                </p>
+                
+                <div class="flex flex-col items-center gap-3">
+                    <i class="fas fa-circle-notch fa-spin text-brand-yellow text-2xl"></i>
+                    <span class="text-brand-yellow font-bold text-xs uppercase tracking-[0.2em]">Redirecionando...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const WHATSAPP_NUMBER = "5586988508764";
+
+        async function loadServices() {
+            try {
+                const response = await fetch('/api/services');
+                const services = await response.json();
+                
+                const grid = document.getElementById('services-grid');
+                grid.innerHTML = ''; 
+
+                services.forEach(service => {
+                    const textoSimples = `Olá! Tenho interesse no serviço: ${service.name} (${service.price})`;
+                    const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(textoSimples)}`;
+                    
+                    const bgImage = service.image_url || 'https://images.unsplash.com/photo-1626785774573-4b799314346d?auto=format&fit=crop&w=800&q=80';
+
+                    const card = document.createElement('div');
+                    card.className = 'bg-[#1E1129] rounded-2xl overflow-hidden border border-white/5 card-hover transition duration-300 flex flex-col group';
+                    
+                    card.innerHTML = `
+                        <div class="h-52 w-full bg-cover bg-center relative overflow-hidden" style="background-image: url('${bgImage}')">
+                            <div class="absolute inset-0 bg-gradient-to-t from-[#1E1129] via-transparent to-transparent"></div>
+                            <div class="absolute inset-0 bg-brand-purple/20 group-hover:bg-transparent transition duration-500"></div>
+                            <div class="absolute bottom-4 left-4 bg-brand-yellow text-brand-purple text-xs font-bold px-3 py-1 rounded-full uppercase shadow-lg">
+                                <i class="fas ${service.icon}"></i> Destaque
+                            </div>
+                        </div>
+                        <div class="p-6 flex-1 flex flex-col relative">
+                            <h3 class="text-xl font-bold text-white mb-2 font-serif">${service.name}</h3>
+                            <p class="text-gray-400 text-sm mb-6 flex-1 leading-relaxed">${service.description}</p>
+                            <div class="w-full h-px bg-white/5 mb-4"></div>
+                            <div class="mb-6 flex justify-between items-end">
+                                <div>
+                                    <p class="text-xs text-gray-500 uppercase font-bold">Investimento</p>
+                                    <p class="text-2xl font-bold text-brand-yellow">${service.price}</p>
+                                </div>
+                            </div>
+                            <a href="${whatsappLink}" target="_blank" class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-green-900/20 transform hover:-translate-y-1">
+                                <i class="fab fa-whatsapp text-xl"></i> Contratar Agora
+                            </a>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Erro:", error);
+                document.getElementById('services-grid').innerHTML = '<p class="text-red-500 col-span-3 text-center">Erro ao carregar serviços.</p>';
+            }
+        }
+
+        // Função para mostrar o Modal
+        function showRedirectModal() {
+            const modal = document.getElementById('redirect-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            // Pequeno timeout para permitir a transição CSS funcionar
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.remove('scale-95');
+                modal.querySelector('div').classList.add('scale-100');
+            }, 10);
+        }
+
+        function hideRedirectModal() {
+            const modal = document.getElementById('redirect-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // Lógica do Formulário
+        document.getElementById('contact-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const message = document.getElementById('message').value;
+
+            // 1. Mostrar o Modal Bonito IMEDIATAMENTE
+            showRedirectModal();
+            
+            const data = { name, phone, message };
+
+            try {
+                // 2. Salvar no Banco (em background)
+                fetch('/api/contact', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                // 3. Montar Mensagem CORRIGIDA (Emojis Padrão + Encode URI)
+                // Usando emojis padrão unicode que não quebram
+                const textoZap = 
+`✨ *Novo Orçamento Personalizado*
+
+👤 *Cliente:* ${name}
+📱 *Tel:* ${phone}
+📝 *Mensagem:* ${message}`;
+
+                // Codifica o texto inteiro para URL (Isso remove os )
+                const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(textoZap)}`;
+                
+                // 4. Aguardar 2.5 segundos para o usuário ver o modal bonito
+                setTimeout(() => {
+                    window.open(url, '_blank');
+                    // Opcional: Resetar formulário depois
+                    e.target.reset();
+                    // Esconder modal depois de um tempo se o usuário voltar para a aba
+                    setTimeout(hideRedirectModal, 2000);
+                }, 2500);
+
+            } catch (error) {
+                console.error('Erro:', error);
+                hideRedirectModal();
+                alert('Erro ao processar. Tente clicar no botão do WhatsApp no canto da tela.');
+            }
+        });
+
+        loadServices();
+    </script>
+</body>
+</html>
