@@ -93,8 +93,8 @@
 
                     <div>
                         <label class="text-xs text-gray-500 uppercase font-bold ml-1">Link da Imagem (URL)</label>
-                        <input type="url" id="svc-image" placeholder="https://..." class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow focus:outline-none transition text-xs">
-                        <p class="text-[10px] text-gray-500 mt-1">*Cole o link de uma imagem do Unsplash ou hospedada online.</p>
+                        <input type="url" id="svc-image" placeholder="Cole o link do Google Drive ou outro..." class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow focus:outline-none transition text-xs">
+                        <p class="text-[10px] text-gray-500 mt-1">*Pode colar link do Google Drive que o sistema corrige automático.</p>
                     </div>
                     
                     <div>
@@ -171,7 +171,7 @@
                 list.innerHTML = data.map(svc => `
                     <div class="bg-[#1E1129] p-3 rounded-lg border border-white/5 flex justify-between items-center group hover:border-brand-yellow/50 transition">
                         <div class="flex items-center gap-3">
-                            <img src="${svc.image_url || 'https://via.placeholder.com/50'}" class="w-10 h-10 rounded object-cover border border-white/10">
+                            <img src="${svc.image_url || 'https://via.placeholder.com/50'}" class="w-10 h-10 rounded object-cover border border-white/10 bg-white/10">
                             <div>
                                 <h4 class="font-bold text-white text-sm">${svc.name}</h4>
                                 <p class="text-[10px] text-brand-yellow">${svc.price}</p>
@@ -187,15 +187,32 @@
             }
         }
 
+        // Função Mágica: Converte Link do Google Drive
+        function formatGoogleDriveLink(url) {
+            if (!url) return "";
+            if (url.includes("drive.google.com") && url.includes("/d/")) {
+                // Extrai o ID entre /d/ e a próxima barra /
+                const idMatch = url.match(/\/d\/(.*?)\//);
+                if (idMatch && idMatch[1]) {
+                    // Retorna o link direto de visualização
+                    return `https://drive.google.com/uc?export=view&id=${idMatch[1]}`;
+                }
+            }
+            return url;
+        }
+
         // 3. Adicionar Serviço
         document.getElementById('add-service-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
+            const rawImageLink = document.getElementById('svc-image').value;
+            const fixedImageLink = formatGoogleDriveLink(rawImageLink);
+
             const payload = {
                 name: document.getElementById('svc-name').value,
                 price: document.getElementById('svc-price').value,
                 description: document.getElementById('svc-desc').value,
-                image_url: document.getElementById('svc-image').value,
+                image_url: fixedImageLink, // Usa o link corrigido
                 icon: document.getElementById('svc-icon').value,
             };
 
@@ -231,9 +248,8 @@
             }
         }
 
-        // --- LOGIN SEGURO (Via Servidor) ---
+        // --- LOGIN SEGURO ---
         async function checkLogin() {
-            // Verifica se já está logado na sessão atual
             if(sessionStorage.getItem('aarti_admin_logged') === 'true') {
                 loadMessages();
                 loadServices();
