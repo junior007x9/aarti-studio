@@ -93,8 +93,8 @@
 
                     <div>
                         <label class="text-xs text-gray-500 uppercase font-bold ml-1">Link da Imagem (URL)</label>
-                        <input type="url" id="svc-image" placeholder="Cole o link do Google Drive ou outro..." class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow focus:outline-none transition text-xs">
-                        <p class="text-[10px] text-gray-500 mt-1">*Pode colar link do Google Drive que o sistema corrige automático.</p>
+                        <input type="url" id="svc-image" placeholder="Cole o link (Recomendado: ImgBB ou PostImage)" class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow focus:outline-none transition text-xs">
+                        <p class="text-[10px] text-gray-500 mt-1">*Se usar Google Drive, certifique-se que está "Público".</p>
                     </div>
                     
                     <div>
@@ -171,7 +171,7 @@
                 list.innerHTML = data.map(svc => `
                     <div class="bg-[#1E1129] p-3 rounded-lg border border-white/5 flex justify-between items-center group hover:border-brand-yellow/50 transition">
                         <div class="flex items-center gap-3">
-                            <img src="${svc.image_url || 'https://via.placeholder.com/50'}" class="w-10 h-10 rounded object-cover border border-white/10 bg-white/10">
+                            <img src="${svc.image_url || 'https://via.placeholder.com/50'}" class="w-10 h-10 rounded object-cover border border-white/10 bg-white/10" onerror="this.src='https://placehold.co/50x50/2E0249/FFF?text=Erro'">
                             <div>
                                 <h4 class="font-bold text-white text-sm">${svc.name}</h4>
                                 <p class="text-[10px] text-brand-yellow">${svc.price}</p>
@@ -187,16 +187,25 @@
             }
         }
 
-        // Função Mágica: Converte Link do Google Drive
+        // Função Mágica V2: Converte Link do Google Drive
         function formatGoogleDriveLink(url) {
             if (!url) return "";
-            if (url.includes("drive.google.com") && url.includes("/d/")) {
-                // Extrai o ID entre /d/ e a próxima barra /
-                const idMatch = url.match(/\/d\/(.*?)\//);
-                if (idMatch && idMatch[1]) {
-                    // Retorna o link direto de visualização
-                    return `https://drive.google.com/uc?export=view&id=${idMatch[1]}`;
-                }
+            
+            // Tenta pegar o ID de várias formas
+            let id = null;
+            
+            // Padrão 1: /file/d/ID/view
+            const match1 = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+            if (match1) id = match1[1];
+            
+            // Padrão 2: id=ID
+            const match2 = url.match(/id=([a-zA-Z0-9_-]+)/);
+            if (!id && match2) id = match2[1];
+
+            if (id) {
+                // Tenta usar o LH3 (mais estável para imagens diretas)
+                // Se falhar, use o PostImage ou ImgBB
+                return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
             }
             return url;
         }
@@ -212,7 +221,7 @@
                 name: document.getElementById('svc-name').value,
                 price: document.getElementById('svc-price').value,
                 description: document.getElementById('svc-desc').value,
-                image_url: fixedImageLink, // Usa o link corrigido
+                image_url: fixedImageLink, 
                 icon: document.getElementById('svc-icon').value,
             };
 
@@ -289,7 +298,6 @@
                 </div>`;
         }
 
-        // Inicia
         checkLogin();
     </script>
     
