@@ -3,13 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AARTI STUDIO | Visual Arts</title>
     
+    <title>AARTI STUDIO | Identidade Visual & Design Premium</title>
+    <meta name="description" content="Transforme sua marca com o AARTI STUDIO. Logomarcas, Sites, Cartões Digitais e Gestão de Redes Sociais.">
+    
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AARTI STUDIO | Comunicação em forma de Arte">
+    <meta property="og:description" content="Design Premium, Logomarcas e Produção de Conteúdo. Veja nosso portfólio e valores.">
+    <meta property="og:image" content="https://images.unsplash.com/photo-1626785774573-4b799314346d?auto=format&fit=crop&w=1200&q=80">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎨</text></svg>">
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -33,27 +41,11 @@
         }
     </script>
     <style>
-        .hero-bg {
-            background: radial-gradient(circle at top right, #2E0249 0%, #0f0518 60%);
-        }
-        .card-hover:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px -5px rgba(247, 204, 2, 0.15);
-        }
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        /* Animação do Modal */
-        @keyframes popupIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .animate-popup {
-            animation: popupIn 0.3s ease-out forwards;
-        }
+        .hero-bg { background: radial-gradient(circle at top right, #2E0249 0%, #0f0518 60%); }
+        .card-hover:hover { transform: translateY(-10px); box-shadow: 0 20px 40px -5px rgba(247, 204, 2, 0.15); }
+        .glass-panel { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        @keyframes popupIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        .animate-popup { animation: popupIn 0.3s ease-out forwards; }
     </style>
 </head>
 <body class="bg-brand-dark text-gray-100 font-sans antialiased overflow-x-hidden">
@@ -180,17 +172,12 @@
     <div id="redirect-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/95 backdrop-blur-sm transition-opacity duration-500 opacity-0">
         <div class="bg-[#1E1129] border border-brand-yellow/30 p-10 rounded-2xl text-center max-w-md w-[90%] shadow-[0_0_60px_rgba(247,204,2,0.15)] relative transform scale-95 transition-transform duration-300">
             <div class="absolute inset-0 bg-brand-yellow/5 rounded-2xl animate-pulse"></div>
-            
             <div class="relative z-10">
                 <div class="w-24 h-24 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6 ring-1 ring-green-500/30">
                     <i class="fab fa-whatsapp text-5xl text-green-500 animate-[bounce_2s_infinite]"></i>
                 </div>
-                
                 <h3 class="text-3xl font-serif font-bold text-white mb-3">Recebemos seu pedido!</h3>
-                <p class="text-gray-300 mb-8 leading-relaxed">
-                    Estamos abrindo seu WhatsApp para conectar você diretamente com nossa equipe criativa.
-                </p>
-                
+                <p class="text-gray-300 mb-8 leading-relaxed">Estamos abrindo seu WhatsApp para conectar você diretamente com nossa equipe criativa.</p>
                 <div class="flex flex-col items-center gap-3">
                     <i class="fas fa-circle-notch fa-spin text-brand-yellow text-2xl"></i>
                     <span class="text-brand-yellow font-bold text-xs uppercase tracking-[0.2em]">Redirecionando...</span>
@@ -213,12 +200,10 @@
                 services.forEach(service => {
                     const textoSimples = `Olá! Tenho interesse no serviço: ${service.name} (${service.price})`;
                     const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(textoSimples)}`;
-                    
                     const bgImage = service.image_url || 'https://images.unsplash.com/photo-1626785774573-4b799314346d?auto=format&fit=crop&w=800&q=80';
 
                     const card = document.createElement('div');
                     card.className = 'bg-[#1E1129] rounded-2xl overflow-hidden border border-white/5 card-hover transition duration-300 flex flex-col group';
-                    
                     card.innerHTML = `
                         <div class="h-52 w-full bg-cover bg-center relative overflow-hidden" style="background-image: url('${bgImage}')">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#1E1129] via-transparent to-transparent"></div>
@@ -250,12 +235,10 @@
             }
         }
 
-        // Função para mostrar o Modal
         function showRedirectModal() {
             const modal = document.getElementById('redirect-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
-            // Pequeno timeout para permitir a transição CSS funcionar
             setTimeout(() => {
                 modal.classList.remove('opacity-0');
                 modal.querySelector('div').classList.remove('scale-95');
@@ -272,7 +255,6 @@
             }, 300);
         }
 
-        // Lógica do Formulário
         document.getElementById('contact-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -280,21 +262,17 @@
             const phone = document.getElementById('phone').value;
             const message = document.getElementById('message').value;
 
-            // 1. Mostrar o Modal Bonito IMEDIATAMENTE
             showRedirectModal();
             
             const data = { name, phone, message };
 
             try {
-                // 2. Salvar no Banco (em background)
                 fetch('/api/contact', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
                 });
 
-                // 3. Montar Mensagem CORRIGIDA (Emojis Padrão + Encode URI)
-                // Usando emojis padrão unicode que não quebram
                 const textoZap = 
 `✨ *Novo Orçamento Personalizado*
 
@@ -302,22 +280,18 @@
 📱 *Tel:* ${phone}
 📝 *Mensagem:* ${message}`;
 
-                // Codifica o texto inteiro para URL (Isso remove os )
                 const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(textoZap)}`;
                 
-                // 4. Aguardar 2.5 segundos para o usuário ver o modal bonito
                 setTimeout(() => {
                     window.open(url, '_blank');
-                    // Opcional: Resetar formulário depois
                     e.target.reset();
-                    // Esconder modal depois de um tempo se o usuário voltar para a aba
                     setTimeout(hideRedirectModal, 2000);
                 }, 2500);
 
             } catch (error) {
                 console.error('Erro:', error);
                 hideRedirectModal();
-                alert('Erro ao processar. Tente clicar no botão do WhatsApp no canto da tela.');
+                alert('Erro ao processar. Tente clicar no botão do WhatsApp.');
             }
         });
 

@@ -17,9 +17,9 @@ app.use(express.static(path.join(__dirname, "public")));
 // Inicializa banco
 setupDatabase();
 
-// --- ROTAS ---
+// --- ROTAS PÚBLICAS ---
 
-// 1. Listar Serviços (Agora da tabela V2 com imagens)
+// 1. Listar Serviços (Para o site)
 app.get("/api/services", async (req, res) => {
   try {
     const result = await client.execute("SELECT * FROM services_v2 ORDER BY id DESC");
@@ -29,7 +29,7 @@ app.get("/api/services", async (req, res) => {
   }
 });
 
-// 2. Salvar Contato
+// 2. Salvar Contato (Formulário)
 app.post("/api/contact", async (req, res) => {
   const { name, phone, message } = req.body;
   try {
@@ -43,7 +43,9 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// 3. Admin - Listar Mensagens
+// --- ROTAS DO PAINEL ADMIN ---
+
+// 3. Ver Mensagens (Leads)
 app.get("/api/admin/messages", async (req, res) => {
   try {
     const result = await client.execute("SELECT * FROM contacts ORDER BY created_at DESC");
@@ -53,21 +55,50 @@ app.get("/api/admin/messages", async (req, res) => {
   }
 });
 
-// Entregar Frontend
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
+// 4. Adicionar Novo Serviço (Agora com Imagem!)
+app.post("/api/admin/services", async (req, res) => {
+  const { name, description, price, icon, image_url } = req.body;
+  try {
+    await client.execute({
+      sql: "INSERT INTO services_v2 (name, description, price, icon, image_url) VALUES (?, ?, ?, ?, ?)",
+      args: [name, description, price, icon, image_url],
+    });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
-// Entregar Painel Admin (Se quiser manter)
+// 5. Deletar Serviço
+app.delete("/api/admin/services/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    await client.execute({
+      sql: "DELETE FROM services_v2 WHERE id = ?",
+      args: [id],
+    });
+    res.json({ success: true });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Rota para entregar o arquivo do Admin
 app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
 
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(port, () => {
-    console.log(`🚀 AARTI STUDIO rodando em http://localhost:${port}`);
-  });
-}
+// Rota Principal
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
 
-// Necessário para a Vercel:
+// Configuração para Vercel ou Local
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(port, () => {
+      console.log(`🚀 AARTI STUDIO rodando em http://localhost:${port}`);
+      console.log(`🔐 Painel Admin em http://localhost:${port}/admin`);
+    });
+}
+  
 export default app;
