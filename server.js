@@ -10,16 +10,33 @@ const port = process.env.PORT || 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// --- MIDDLEWARES OBRIGATÓRIOS ---
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); // Importante para ler a senha enviada
 app.use(express.static(path.join(__dirname, "public")));
 
-// Inicializa banco
+// Inicializa banco ao arrancar
 setupDatabase();
 
-// --- ROTAS PÚBLICAS ---
+// --- ROTA DE SEGURANÇA (LOGIN) ---
+app.post("/api/admin/login", (req, res) => {
+  const { password } = req.body;
+  
+  // SENHA DEFINIDA PARA: admin123
+  const adminPass = "admin123"; 
 
-// 1. Listar Serviços (Para o site)
+  // Verifica se a senha existe e remove espaços em branco extras (trim)
+  if (password && password.trim() === adminPass) {
+    res.json({ success: true });
+  } else {
+    console.log("Tentativa de senha errada:", password);
+    res.status(401).json({ success: false });
+  }
+});
+
+// --- ROTAS PÚBLICAS (SITE) ---
+
+// 1. Listar Serviços
 app.get("/api/services", async (req, res) => {
   try {
     const result = await client.execute("SELECT * FROM services_v2 ORDER BY id DESC");
@@ -43,9 +60,9 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// --- ROTAS DO PAINEL ADMIN ---
+// --- ROTAS DO PAINEL ADMIN (PROTEGIDAS) ---
 
-// 3. Ver Mensagens (Leads)
+// 3. Ver Mensagens
 app.get("/api/admin/messages", async (req, res) => {
   try {
     const result = await client.execute("SELECT * FROM contacts ORDER BY created_at DESC");
@@ -55,7 +72,7 @@ app.get("/api/admin/messages", async (req, res) => {
   }
 });
 
-// 4. Adicionar Novo Serviço (Agora com Imagem!)
+// 4. Adicionar Serviço
 app.post("/api/admin/services", async (req, res) => {
   const { name, description, price, icon, image_url } = req.body;
   try {
@@ -83,21 +100,19 @@ app.delete("/api/admin/services/:id", async (req, res) => {
   }
 });
 
-// Rota para entregar o arquivo do Admin
+// Entregar arquivos HTML
 app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
 
-// Rota Principal
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Configuração para Vercel ou Local
+// Configuração para Vercel
 if (process.env.NODE_ENV !== 'production') {
     app.listen(port, () => {
       console.log(`🚀 AARTI STUDIO rodando em http://localhost:${port}`);
-      console.log(`🔐 Painel Admin em http://localhost:${port}/admin`);
     });
 }
   
