@@ -92,9 +92,16 @@
                     </div>
 
                     <div>
-                        <label class="text-xs text-gray-500 uppercase font-bold ml-1">Link da Imagem (URL)</label>
-                        <input type="url" id="svc-image" placeholder="Cole o link (Recomendado: ImgBB ou PostImage)" class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow focus:outline-none transition text-xs">
-                        <p class="text-[10px] text-gray-500 mt-1">*Se usar Google Drive, certifique-se que está "Público".</p>
+                        <label class="text-xs text-gray-500 uppercase font-bold ml-1">Imagem do Serviço</label>
+                        <div class="flex items-center gap-3">
+                            <label class="w-full flex flex-col items-center justify-center px-4 py-4 bg-black/40 border border-white/10 rounded-lg cursor-pointer hover:bg-white/5 transition group">
+                                <i class="fas fa-cloud-upload-alt text-2xl text-brand-yellow mb-2 group-hover:scale-110 transition"></i>
+                                <span class="text-xs text-gray-400" id="file-label">Clique para enviar foto</span>
+                                <input type="file" id="svc-file" accept="image/*" class="hidden">
+                            </label>
+                            <img id="preview-img" class="w-16 h-16 rounded bg-white/5 object-cover hidden border border-brand-yellow">
+                        </div>
+                        <input type="hidden" id="svc-image-base64">
                     </div>
                     
                     <div>
@@ -131,9 +138,56 @@
     </main>
 
     <script>
-        // --- FUNÇÕES ---
+        // --- LÓGICA DE UPLOAD ---
+        
+        // Quando selecionar arquivo, converter e mostrar preview
+        document.getElementById('svc-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        // 1. Carregar Mensagens
+            const label = document.getElementById('file-label');
+            const preview = document.getElementById('preview-img');
+            const hiddenInput = document.getElementById('svc-image-base64');
+
+            label.innerText = "Processando...";
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                // Criar imagem temporária para redimensionar
+                const img = new Image();
+                img.src = event.target.result;
+                
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Definir tamanho máximo (800px) para não pesar o banco
+                    const maxWidth = 800;
+                    const scaleSize = maxWidth / img.width;
+                    const newWidth = maxWidth;
+                    const newHeight = img.height * scaleSize;
+
+                    canvas.width = newWidth;
+                    canvas.height = newHeight;
+
+                    // Desenhar imagem redimensionada
+                    ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+                    // Converter para código (Base64) com qualidade reduzida (0.7)
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+                    // Salvar no input oculto e mostrar preview
+                    hiddenInput.value = dataUrl;
+                    preview.src = dataUrl;
+                    preview.classList.remove('hidden');
+                    label.innerText = file.name;
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // --- FUNÇÕES DO SISTEMA ---
+
         async function loadMessages() {
             const list = document.getElementById('messages-list');
             try {
@@ -156,12 +210,10 @@
                     </tr>
                 `).join('');
             } catch (e) {
-                console.error(e);
                 list.innerHTML = '<tr><td colspan="3" class="p-4 text-red-500">Erro ao carregar.</td></tr>';
             }
         }
 
-        // 2. Carregar Serviços
         async function loadServices() {
             const list = document.getElementById('services-list');
             try {
@@ -171,7 +223,7 @@
                 list.innerHTML = data.map(svc => `
                     <div class="bg-[#1E1129] p-3 rounded-lg border border-white/5 flex justify-between items-center group hover:border-brand-yellow/50 transition">
                         <div class="flex items-center gap-3">
-                            <img src="${svc.image_url || 'https://via.placeholder.com/50'}" class="w-10 h-10 rounded object-cover border border-white/10 bg-white/10" onerror="this.src='https://placehold.co/50x50/2E0249/FFF?text=Erro'">
+                            <img src="${svc.image_url}" class="w-10 h-10 rounded object-cover border border-white/10 bg-white/10" onerror="this.src='https://placehold.co/50x50/2E0249/FFF?text=IMG'">
                             <div>
                                 <h4 class="font-bold text-white text-sm">${svc.name}</h4>
                                 <p class="text-[10px] text-brand-yellow">${svc.price}</p>
@@ -182,52 +234,31 @@
                         </button>
                     </div>
                 `).join('');
-            } catch (e) {
-                console.error(e);
-            }
+            } catch (e) { console.error(e); }
         }
 
-        // Função Mágica V2: Converte Link do Google Drive
-        function formatGoogleDriveLink(url) {
-            if (!url) return "";
-            
-            // Tenta pegar o ID de várias formas
-            let id = null;
-            
-            // Padrão 1: /file/d/ID/view
-            const match1 = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-            if (match1) id = match1[1];
-            
-            // Padrão 2: id=ID
-            const match2 = url.match(/id=([a-zA-Z0-9_-]+)/);
-            if (!id && match2) id = match2[1];
-
-            if (id) {
-                // Tenta usar o LH3 (mais estável para imagens diretas)
-                // Se falhar, use o PostImage ou ImgBB
-                return `https://drive.google.com/thumbnail?id=${id}&sz=w1000`;
-            }
-            return url;
-        }
-
-        // 3. Adicionar Serviço
         document.getElementById('add-service-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const rawImageLink = document.getElementById('svc-image').value;
-            const fixedImageLink = formatGoogleDriveLink(rawImageLink);
+            // Pega o código da imagem gerado automaticamente
+            const imageCode = document.getElementById('svc-image-base64').value;
+
+            if (!imageCode) {
+                alert("Por favor, selecione uma imagem do seu dispositivo.");
+                return;
+            }
 
             const payload = {
                 name: document.getElementById('svc-name').value,
                 price: document.getElementById('svc-price').value,
                 description: document.getElementById('svc-desc').value,
-                image_url: fixedImageLink, 
+                image_url: imageCode, // Envia o código da imagem
                 icon: document.getElementById('svc-icon').value,
             };
 
             const btn = e.target.querySelector('button');
             const originalText = btn.innerText;
-            btn.innerText = "Salvando...";
+            btn.innerText = "Enviando imagem...";
 
             try {
                 const res = await fetch('/api/admin/services', {
@@ -237,11 +268,14 @@
                 });
                 
                 if (res.ok) {
-                    alert('Serviço adicionado com sucesso!');
+                    alert('Serviço criado com sucesso!');
                     e.target.reset();
+                    document.getElementById('preview-img').classList.add('hidden');
+                    document.getElementById('svc-image-base64').value = '';
+                    document.getElementById('file-label').innerText = "Clique para enviar foto";
                     loadServices(); 
                 } else {
-                    alert('Erro ao salvar.');
+                    alert('Erro ao salvar. A imagem pode ser muito grande, tente uma menor.');
                 }
             } catch (error) {
                 alert('Erro de conexão.');
@@ -249,22 +283,19 @@
             btn.innerText = originalText;
         });
 
-        // 4. Deletar Serviço
         async function deleteService(id) {
-            if(confirm('Tem certeza que deseja apagar este serviço do site?')) {
+            if(confirm('Tem certeza que deseja apagar este serviço?')) {
                 await fetch(`/api/admin/services/${id}`, { method: 'DELETE' });
                 loadServices();
             }
         }
 
-        // --- LOGIN SEGURO ---
         async function checkLogin() {
             if(sessionStorage.getItem('aarti_admin_logged') === 'true') {
                 loadMessages();
                 loadServices();
                 return;
             }
-
             const pass = prompt("🔐 Área Restrita AARTI STUDIO.\nDigite a senha de administrador:");
             
             try {
@@ -275,37 +306,24 @@
                 });
                 
                 const data = await res.json();
-
                 if (data.success) {
                     sessionStorage.setItem('aarti_admin_logged', 'true');
                     loadMessages();
                     loadServices();
                 } else {
-                    showAccessDenied();
+                    document.body.innerHTML = "<h1 class='text-white text-center mt-20'>Acesso Negado</h1>";
                 }
             } catch (error) {
-                showAccessDenied();
+                document.body.innerHTML = "<h1 class='text-white text-center mt-20'>Acesso Negado</h1>";
             }
-        }
-
-        function showAccessDenied() {
-            document.body.innerHTML = `
-                <div class='h-screen flex flex-col items-center justify-center bg-brand-dark text-white'>
-                    <i class="fas fa-lock text-5xl text-red-500 mb-6 animate-pulse"></i>
-                    <h1 class='text-3xl font-bold font-serif mb-2'>Acesso Negado</h1>
-                    <p class="text-gray-500 mb-6">Senha incorreta.</p>
-                    <button onclick="location.reload()" class="bg-brand-yellow text-brand-purple font-bold px-6 py-3 rounded-lg hover:bg-white transition">Tentar novamente</button>
-                </div>`;
         }
 
         checkLogin();
     </script>
-    
     <style>
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: #0f0518; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #570A57; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #F7CC02; }
     </style>
 </body>
 </html>

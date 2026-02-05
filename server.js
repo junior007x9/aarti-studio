@@ -10,33 +10,28 @@ const port = process.env.PORT || 3000;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// --- MIDDLEWARES OBRIGATÓRIOS ---
+// --- MIDDLEWARES (CONFIGURAÇÃO) ---
 app.use(cors());
-app.use(express.json()); // Importante para ler a senha enviada
+// AUMENTAMOS O LIMITE PARA 10MB PARA ACEITAR IMAGENS
+app.use(express.json({ limit: '10mb' })); 
 app.use(express.static(path.join(__dirname, "public")));
 
-// Inicializa banco ao arrancar
+// Inicializa banco
 setupDatabase();
 
-// --- ROTA DE SEGURANÇA (LOGIN) ---
+// --- ROTA DE LOGIN ---
 app.post("/api/admin/login", (req, res) => {
   const { password } = req.body;
-  
-  // SENHA DEFINIDA PARA: admin123
-  const adminPass = "admin123"; 
+  const adminPass = "admin123"; // Sua senha
 
-  // Verifica se a senha existe e remove espaços em branco extras (trim)
   if (password && password.trim() === adminPass) {
     res.json({ success: true });
   } else {
-    console.log("Tentativa de senha errada:", password);
     res.status(401).json({ success: false });
   }
 });
 
-// --- ROTAS PÚBLICAS (SITE) ---
-
-// 1. Listar Serviços
+// --- ROTAS DO SITE ---
 app.get("/api/services", async (req, res) => {
   try {
     const result = await client.execute("SELECT * FROM services_v2 ORDER BY id DESC");
@@ -46,7 +41,6 @@ app.get("/api/services", async (req, res) => {
   }
 });
 
-// 2. Salvar Contato (Formulário)
 app.post("/api/contact", async (req, res) => {
   const { name, phone, message } = req.body;
   try {
@@ -60,9 +54,7 @@ app.post("/api/contact", async (req, res) => {
   }
 });
 
-// --- ROTAS DO PAINEL ADMIN (PROTEGIDAS) ---
-
-// 3. Ver Mensagens
+// --- ROTAS DO ADMIN ---
 app.get("/api/admin/messages", async (req, res) => {
   try {
     const result = await client.execute("SELECT * FROM contacts ORDER BY created_at DESC");
@@ -72,7 +64,6 @@ app.get("/api/admin/messages", async (req, res) => {
   }
 });
 
-// 4. Adicionar Serviço
 app.post("/api/admin/services", async (req, res) => {
   const { name, description, price, icon, image_url } = req.body;
   try {
@@ -86,7 +77,6 @@ app.post("/api/admin/services", async (req, res) => {
   }
 });
 
-// 5. Deletar Serviço
 app.delete("/api/admin/services/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -100,7 +90,6 @@ app.delete("/api/admin/services/:id", async (req, res) => {
   }
 });
 
-// Entregar arquivos HTML
 app.get("/admin", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "admin.html"));
 });
@@ -109,7 +98,6 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
 });
 
-// Configuração para Vercel
 if (process.env.NODE_ENV !== 'production') {
     app.listen(port, () => {
       console.log(`🚀 AARTI STUDIO rodando em http://localhost:${port}`);
