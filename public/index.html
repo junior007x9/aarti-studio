@@ -44,8 +44,15 @@
         .hero-bg { background: radial-gradient(circle at top right, #2E0249 0%, #0f0518 60%); }
         .card-hover:hover { transform: translateY(-10px); box-shadow: 0 20px 40px -5px rgba(247, 204, 2, 0.15); }
         .glass-panel { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        
+        /* Animações */
         @keyframes popupIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
         .animate-popup { animation: popupIn 0.3s ease-out forwards; }
+
+        /* Scrollbar da Modal */
+        .modal-scroll::-webkit-scrollbar { width: 6px; }
+        .modal-scroll::-webkit-scrollbar-thumb { background: #F7CC02; border-radius: 4px; }
+        .modal-scroll::-webkit-scrollbar-track { background: #1A0B2E; }
     </style>
 </head>
 <body class="bg-brand-dark text-gray-100 font-sans antialiased overflow-x-hidden">
@@ -118,7 +125,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-20">
                 <h2 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">Portfólio & <span class="text-brand-yellow">Valores</span></h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">Escolha o pacote ideal para sua necessidade. Valores transparentes e qualidade premium.</p>
+                <p class="text-gray-400 max-w-2xl mx-auto">Clique nas imagens para ver os detalhes. Escolha o pacote ideal para sua necessidade.</p>
             </div>
 
             <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -186,42 +193,94 @@
         </div>
     </div>
 
+    <div id="zoom-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/95 backdrop-blur-md opacity-0 transition-opacity duration-300">
+        <button onclick="closeZoom()" class="absolute top-6 right-6 text-white hover:text-brand-yellow text-4xl z-[110] transition">
+            <i class="fas fa-times"></i>
+        </button>
+
+        <div class="relative w-full max-w-6xl h-full p-4 md:p-10 flex flex-col md:flex-row items-center justify-center gap-8">
+            
+            <div class="w-full md:w-2/3 h-[50vh] md:h-[80vh] flex items-center justify-center">
+                <img id="zoom-img" src="" class="max-w-full max-h-full object-contain rounded-lg shadow-[0_0_40px_rgba(247,204,2,0.1)]">
+            </div>
+
+            <div class="w-full md:w-1/3 bg-[#1E1129]/90 border border-white/10 p-8 rounded-2xl backdrop-blur-xl shadow-2xl modal-scroll overflow-y-auto max-h-[80vh]">
+                <div class="mb-6">
+                    <span id="zoom-price" class="text-brand-yellow font-bold text-2xl block mb-2"></span>
+                    <h3 id="zoom-title" class="text-3xl font-serif font-bold text-white leading-tight"></h3>
+                </div>
+                
+                <div class="w-10 h-1 bg-brand-yellow mb-6"></div>
+                
+                <p id="zoom-desc" class="text-gray-300 leading-relaxed mb-8 text-lg"></p>
+
+                <a id="zoom-btn" href="#" target="_blank" class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-green-900/20 transform hover:-translate-y-1 text-lg">
+                    <i class="fab fa-whatsapp"></i> Contratar Agora
+                </a>
+                
+                <div class="mt-6 text-center">
+                    <p class="text-xs text-gray-500">Inclui suporte e arquivos em alta qualidade.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const WHATSAPP_NUMBER = "5586988508764";
+        let allServices = []; // Guarda os serviços para abrir no zoom
 
         async function loadServices() {
             try {
                 const response = await fetch('/api/services');
                 const services = await response.json();
                 
+                // Salva na memória
+                allServices = services;
+                
                 const grid = document.getElementById('services-grid');
                 grid.innerHTML = ''; 
 
-                services.forEach(service => {
+                services.forEach((service, index) => {
+                    // Texto do WhatsApp
                     const textoSimples = `Olá! Tenho interesse no serviço: ${service.name} (${service.price})`;
                     const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(textoSimples)}`;
+                    
+                    // Imagem de Fallback
                     const bgImage = service.image_url || 'https://images.unsplash.com/photo-1626785774573-4b799314346d?auto=format&fit=crop&w=800&q=80';
 
                     const card = document.createElement('div');
                     card.className = 'bg-[#1E1129] rounded-2xl overflow-hidden border border-white/5 card-hover transition duration-300 flex flex-col group';
+                    
                     card.innerHTML = `
-                        <div class="h-52 w-full bg-cover bg-center relative overflow-hidden" style="background-image: url('${bgImage}')">
+                        <div onclick="openZoom(${index})" class="h-64 w-full bg-cover bg-center relative overflow-hidden cursor-pointer group/img">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#1E1129] via-transparent to-transparent"></div>
-                            <div class="absolute inset-0 bg-brand-purple/20 group-hover:bg-transparent transition duration-500"></div>
-                            <div class="absolute bottom-4 left-4 bg-brand-yellow text-brand-purple text-xs font-bold px-3 py-1 rounded-full uppercase shadow-lg">
-                                <i class="fas ${service.icon}"></i> Destaque
+                            
+                            <div class="absolute inset-0 bg-brand-purple/40 opacity-0 group-hover/img:opacity-100 transition duration-300 flex items-center justify-center backdrop-blur-[2px]">
+                                <div class="bg-brand-yellow text-brand-purple rounded-full p-4 transform scale-50 group-hover/img:scale-100 transition duration-300 shadow-lg">
+                                    <i class="fas fa-search-plus text-2xl"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="absolute inset-0 -z-10" style="background-image: url('${bgImage}'); background-size: cover; background-position: center;"></div>
+
+                            <div class="absolute bottom-4 left-4 bg-brand-yellow text-brand-purple text-xs font-bold px-3 py-1 rounded-full uppercase shadow-lg z-20 pointer-events-none">
+                                <i class="fas ${service.icon}"></i> Ver Detalhes
                             </div>
                         </div>
+
                         <div class="p-6 flex-1 flex flex-col relative">
-                            <h3 class="text-xl font-bold text-white mb-2 font-serif">${service.name}</h3>
-                            <p class="text-gray-400 text-sm mb-6 flex-1 leading-relaxed">${service.description}</p>
+                            <h3 class="text-xl font-bold text-white mb-2 font-serif cursor-pointer hover:text-brand-yellow transition" onclick="openZoom(${index})">${service.name}</h3>
+                            <p class="text-gray-400 text-sm mb-6 flex-1 leading-relaxed line-clamp-3">${service.description}</p>
+                            
                             <div class="w-full h-px bg-white/5 mb-4"></div>
+
                             <div class="mb-6 flex justify-between items-end">
                                 <div>
                                     <p class="text-xs text-gray-500 uppercase font-bold">Investimento</p>
                                     <p class="text-2xl font-bold text-brand-yellow">${service.price}</p>
                                 </div>
                             </div>
+
                             <a href="${whatsappLink}" target="_blank" class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-green-900/20 transform hover:-translate-y-1">
                                 <i class="fab fa-whatsapp text-xl"></i> Contratar Agora
                             </a>
@@ -235,6 +294,46 @@
             }
         }
 
+        // --- FUNÇÕES DE ZOOM (LIGHTBOX) ---
+        function openZoom(index) {
+            const service = allServices[index];
+            if(!service) return;
+
+            // Preencher dados na modal
+            document.getElementById('zoom-img').src = service.image_url || 'https://via.placeholder.com/800';
+            document.getElementById('zoom-title').innerText = service.name;
+            document.getElementById('zoom-price').innerText = service.price;
+            document.getElementById('zoom-desc').innerText = service.description;
+
+            // Atualizar botão do WhatsApp dentro do Zoom
+            const texto = `Olá! Vi os detalhes de *${service.name}* (${service.price}) e quero contratar.`;
+            document.getElementById('zoom-btn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(texto)}`;
+
+            // Mostrar Modal com Animação
+            const modal = document.getElementById('zoom-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+            }, 10);
+        }
+
+        function closeZoom() {
+            const modal = document.getElementById('zoom-modal');
+            modal.classList.add('opacity-0');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 300);
+        }
+
+        // Fechar zoom se clicar fora da imagem
+        document.getElementById('zoom-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeZoom();
+        });
+
+
+        // --- FUNÇÕES DE REDIRECIONAMENTO (FORMULÁRIO) ---
         function showRedirectModal() {
             const modal = document.getElementById('redirect-modal');
             modal.classList.remove('hidden');
