@@ -227,32 +227,30 @@
 
     <script>
         const WHATSAPP_NUMBER = "5586988508764";
-        let allServices = []; // Guarda os serviços para abrir no zoom
+        let allServices = []; 
 
         async function loadServices() {
             try {
                 const response = await fetch('/api/services');
                 const services = await response.json();
                 
-                // Salva na memória
                 allServices = services;
                 
                 const grid = document.getElementById('services-grid');
                 grid.innerHTML = ''; 
 
                 services.forEach((service, index) => {
-                    // Texto do WhatsApp
                     const textoSimples = `Olá! Tenho interesse no serviço: ${service.name} (${service.price})`;
                     const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(textoSimples)}`;
                     
-                    // Imagem de Fallback
                     const bgImage = service.image_url || 'https://images.unsplash.com/photo-1626785774573-4b799314346d?auto=format&fit=crop&w=800&q=80';
 
                     const card = document.createElement('div');
                     card.className = 'bg-[#1E1129] rounded-2xl overflow-hidden border border-white/5 card-hover transition duration-300 flex flex-col group';
                     
+                    // CORREÇÃO AQUI: Apliquei a imagem diretamente na div, sem z-index negativo
                     card.innerHTML = `
-                        <div onclick="openZoom(${index})" class="h-64 w-full bg-cover bg-center relative overflow-hidden cursor-pointer group/img">
+                        <div onclick="openZoom(${index})" class="h-64 w-full bg-cover bg-center relative overflow-hidden cursor-pointer group/img" style="background-image: url('${bgImage}');">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#1E1129] via-transparent to-transparent"></div>
                             
                             <div class="absolute inset-0 bg-brand-purple/40 opacity-0 group-hover/img:opacity-100 transition duration-300 flex items-center justify-center backdrop-blur-[2px]">
@@ -261,8 +259,6 @@
                                 </div>
                             </div>
                             
-                            <div class="absolute inset-0 -z-10" style="background-image: url('${bgImage}'); background-size: cover; background-position: center;"></div>
-
                             <div class="absolute bottom-4 left-4 bg-brand-yellow text-brand-purple text-xs font-bold px-3 py-1 rounded-full uppercase shadow-lg z-20 pointer-events-none">
                                 <i class="fas ${service.icon}"></i> Ver Detalhes
                             </div>
@@ -294,22 +290,19 @@
             }
         }
 
-        // --- FUNÇÕES DE ZOOM (LIGHTBOX) ---
+        // --- FUNÇÕES DE ZOOM ---
         function openZoom(index) {
             const service = allServices[index];
             if(!service) return;
 
-            // Preencher dados na modal
             document.getElementById('zoom-img').src = service.image_url || 'https://via.placeholder.com/800';
             document.getElementById('zoom-title').innerText = service.name;
             document.getElementById('zoom-price').innerText = service.price;
             document.getElementById('zoom-desc').innerText = service.description;
 
-            // Atualizar botão do WhatsApp dentro do Zoom
             const texto = `Olá! Vi os detalhes de *${service.name}* (${service.price}) e quero contratar.`;
             document.getElementById('zoom-btn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(texto)}`;
 
-            // Mostrar Modal com Animação
             const modal = document.getElementById('zoom-modal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
@@ -327,13 +320,11 @@
             }, 300);
         }
 
-        // Fechar zoom se clicar fora da imagem
         document.getElementById('zoom-modal').addEventListener('click', function(e) {
             if (e.target === this) closeZoom();
         });
 
-
-        // --- FUNÇÕES DE REDIRECIONAMENTO (FORMULÁRIO) ---
+        // --- FUNÇÕES DE FORMULÁRIO ---
         function showRedirectModal() {
             const modal = document.getElementById('redirect-modal');
             modal.classList.remove('hidden');
