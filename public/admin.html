@@ -137,10 +137,71 @@
 
     </main>
 
+    <div id="edit-modal" class="fixed inset-0 bg-black/80 hidden items-center justify-center z-[100] p-4 backdrop-blur-sm">
+        <div class="bg-[#1E1129] p-6 rounded-2xl border border-brand-yellow/20 shadow-2xl w-full max-w-md relative">
+            <button type="button" onclick="closeEditModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white transition"><i class="fas fa-times text-xl"></i></button>
+            
+            <h2 class="text-xl font-bold text-brand-yellow mb-6 flex items-center">
+                <i class="fas fa-edit mr-3"></i> Editar Serviço
+            </h2>
+            
+            <form id="edit-service-form" class="space-y-4">
+                <input type="hidden" id="edit-svc-id">
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase font-bold ml-1">Nome do Serviço</label>
+                        <input type="text" id="edit-svc-name" required class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase font-bold ml-1">Preço / Valor</label>
+                        <input type="text" id="edit-svc-price" required class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow focus:outline-none transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-500 uppercase font-bold ml-1">Descrição Curta</label>
+                    <textarea id="edit-svc-desc" rows="2" required class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow focus:outline-none transition"></textarea>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-500 uppercase font-bold ml-1">Nova Imagem (Opcional)</label>
+                    <div class="flex items-center gap-3">
+                        <label class="w-full flex flex-col items-center justify-center px-4 py-4 bg-black/40 border border-white/10 rounded-lg cursor-pointer hover:bg-white/5 transition group">
+                            <i class="fas fa-cloud-upload-alt text-2xl text-brand-yellow mb-2 group-hover:scale-110 transition"></i>
+                            <span class="text-xs text-gray-400" id="edit-file-label">Clique para alterar</span>
+                            <input type="file" id="edit-svc-file" accept="image/*" class="hidden">
+                        </label>
+                        <img id="edit-preview-img" class="w-16 h-16 rounded bg-white/5 object-cover border border-brand-yellow">
+                    </div>
+                    <input type="hidden" id="edit-svc-image-base64">
+                </div>
+                
+                <div>
+                    <label class="text-xs text-gray-500 uppercase font-bold ml-1">Ícone</label>
+                    <div class="relative">
+                        <select id="edit-svc-icon" class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow focus:outline-none appearance-none cursor-pointer">
+                            <option value="fa-star">★ Estrela (Destaque)</option>
+                            <option value="fa-pen-nib">✒️ Design / Logo</option>
+                            <option value="fa-video">🎥 Vídeo / Reels</option>
+                            <option value="fa-camera">📸 Fotografia</option>
+                            <option value="fa-id-card">🪪 Cartão Visita</option>
+                            <option value="fa-hashtag">#️⃣ Social Media</option>
+                            <option value="fa-laptop-code">💻 Site / Web</option>
+                        </select>
+                        <div class="absolute right-3 top-3 text-brand-yellow pointer-events-none">▼</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full bg-blue-500 text-white font-bold py-3 rounded-lg hover:bg-blue-400 transition transform active:scale-95 shadow-lg">
+                    Salvar Alterações
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script>
-        // --- LÓGICA DE UPLOAD ---
-        
-        // Quando selecionar arquivo, converter e mostrar preview
+        // --- LÓGICA DE UPLOAD (CRIAR) ---
         document.getElementById('svc-file').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -153,7 +214,6 @@
 
             const reader = new FileReader();
             reader.onload = function(event) {
-                // Criar imagem temporária para redimensionar
                 const img = new Image();
                 img.src = event.target.result;
                 
@@ -161,7 +221,6 @@
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     
-                    // Definir tamanho máximo (800px) para não pesar o banco
                     const maxWidth = 800;
                     const scaleSize = maxWidth / img.width;
                     const newWidth = maxWidth;
@@ -169,14 +228,9 @@
 
                     canvas.width = newWidth;
                     canvas.height = newHeight;
-
-                    // Desenhar imagem redimensionada
                     ctx.drawImage(img, 0, 0, newWidth, newHeight);
 
-                    // Converter para código (Base64) com qualidade reduzida (0.7)
                     const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
-
-                    // Salvar no input oculto e mostrar preview
                     hiddenInput.value = dataUrl;
                     preview.src = dataUrl;
                     preview.classList.remove('hidden');
@@ -185,6 +239,103 @@
             };
             reader.readAsDataURL(file);
         });
+
+        // --- LÓGICA DE EDIÇÃO (UPLOAD E PREVIEW) ---
+        document.getElementById('edit-svc-file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const label = document.getElementById('edit-file-label');
+            const preview = document.getElementById('edit-preview-img');
+            const hiddenInput = document.getElementById('edit-svc-image-base64');
+
+            label.innerText = "Processando...";
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.src = event.target.result;
+                
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    const maxWidth = 800;
+                    const scaleSize = maxWidth / img.width;
+                    const newWidth = maxWidth;
+                    const newHeight = img.height * scaleSize;
+
+                    canvas.width = newWidth;
+                    canvas.height = newHeight;
+                    ctx.drawImage(img, 0, 0, newWidth, newHeight);
+
+                    const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+                    hiddenInput.value = dataUrl;
+                    preview.src = dataUrl;
+                    label.innerText = file.name;
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function openEditModal(id, name, price, description, icon, imageUrl) {
+            document.getElementById('edit-svc-id').value = id;
+            document.getElementById('edit-svc-name').value = name;
+            document.getElementById('edit-svc-price').value = price;
+            document.getElementById('edit-svc-desc').value = description;
+            document.getElementById('edit-svc-icon').value = icon;
+            
+            document.getElementById('edit-preview-img').src = imageUrl;
+            document.getElementById('edit-svc-image-base64').value = imageUrl; 
+            document.getElementById('edit-file-label').innerText = "Clique para alterar foto";
+
+            document.getElementById('edit-modal').classList.remove('hidden');
+            document.getElementById('edit-modal').classList.add('flex');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+            document.getElementById('edit-modal').classList.remove('flex');
+        }
+
+        // Enviar os dados editados
+        document.getElementById('edit-service-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const id = document.getElementById('edit-svc-id').value;
+            const payload = {
+                name: document.getElementById('edit-svc-name').value,
+                price: document.getElementById('edit-svc-price').value,
+                description: document.getElementById('edit-svc-desc').value,
+                image_url: document.getElementById('edit-svc-image-base64').value,
+                icon: document.getElementById('edit-svc-icon').value,
+            };
+
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerText;
+            btn.innerText = "Salvando...";
+
+            try {
+                // Aqui estamos fazendo um PUT para a API (lembre-se de configurar a rota no server.js)
+                const res = await fetch(`/api/admin/services/${id}`, {
+                    method: 'PUT',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
+                
+                if (res.ok) {
+                    alert('Serviço atualizado com sucesso!');
+                    closeEditModal();
+                    loadServices(); 
+                } else {
+                    alert('Erro ao atualizar.');
+                }
+            } catch (error) {
+                alert('Erro de conexão.');
+            }
+            btn.innerText = originalText;
+        });
+
 
         // --- FUNÇÕES DO SISTEMA ---
 
@@ -229,9 +380,14 @@
                                 <p class="text-[10px] text-brand-yellow">${svc.price}</p>
                             </div>
                         </div>
-                        <button onclick="deleteService(${svc.id})" class="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-600 hover:text-white transition" title="Excluir Serviço">
-                            <i class="fas fa-trash text-xs"></i>
-                        </button>
+                        <div class="flex items-center gap-2">
+                            <button onclick="openEditModal(${svc.id}, decodeURIComponent('${encodeURIComponent(svc.name)}'), decodeURIComponent('${encodeURIComponent(svc.price)}'), decodeURIComponent('${encodeURIComponent(svc.description || '')}'), '${svc.icon}', '${svc.image_url}')" class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center hover:bg-blue-600 hover:text-white transition" title="Editar Serviço">
+                                <i class="fas fa-pen text-xs"></i>
+                            </button>
+                            <button onclick="deleteService(${svc.id})" class="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-600 hover:text-white transition" title="Excluir Serviço">
+                                <i class="fas fa-trash text-xs"></i>
+                            </button>
+                        </div>
                     </div>
                 `).join('');
             } catch (e) { console.error(e); }
@@ -240,7 +396,6 @@
         document.getElementById('add-service-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            // Pega o código da imagem gerado automaticamente
             const imageCode = document.getElementById('svc-image-base64').value;
 
             if (!imageCode) {
@@ -252,7 +407,7 @@
                 name: document.getElementById('svc-name').value,
                 price: document.getElementById('svc-price').value,
                 description: document.getElementById('svc-desc').value,
-                image_url: imageCode, // Envia o código da imagem
+                image_url: imageCode,
                 icon: document.getElementById('svc-icon').value,
             };
 
