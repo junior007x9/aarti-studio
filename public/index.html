@@ -68,7 +68,7 @@
                         <a href="#home" class="hover:text-brand-yellow transition text-sm font-medium">Home</a>
                         <a href="#about" class="hover:text-brand-yellow transition text-sm font-medium">Sobre Nós</a>
                         <a href="#services" class="bg-brand-yellow text-brand-purple px-5 py-2 rounded-full font-bold hover:bg-white transition shadow-lg shadow-brand-yellow/20">
-                            Serviços e Valores
+                            Serviços
                         </a>
                     </div>
                 </div>
@@ -89,7 +89,7 @@
             </p>
             
             <a href="#services" class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-brand-purple transition-all duration-200 bg-brand-yellow font-sans rounded-full focus:outline-none hover:bg-white hover:scale-105 ring-offset-2 focus:ring-2 ring-brand-yellow">
-                Serviços e Valores
+                Conhecer Serviços
                 <i class="fas fa-arrow-down ml-2 group-hover:animate-bounce"></i>
                 <div class="absolute -inset-3 rounded-full bg-brand-yellow opacity-20 group-hover:opacity-40 blur-lg transition-opacity duration-200"></div>
             </a>
@@ -124,8 +124,8 @@
     <section id="services" class="py-24 bg-[#13071E]">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-20">
-                <h2 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">Portfólio & <span class="text-brand-yellow">Valores</span></h2>
-                <p class="text-gray-400 max-w-2xl mx-auto">Clique nas imagens para ver os detalhes. Escolha o pacote ideal para sua necessidade.</p>
+                <h2 class="font-serif text-4xl md:text-5xl font-bold text-white mb-4">Nosso <span class="text-brand-yellow">Portfólio</span></h2>
+                <p class="text-gray-400 max-w-2xl mx-auto">Clique nas imagens para ver os detalhes e entre em contato diretamente pelo WhatsApp.</p>
             </div>
 
             <div id="services-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -141,7 +141,7 @@
         <div class="absolute top-0 right-0 w-64 h-64 bg-brand-purple rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
 
         <div class="max-w-4xl mx-auto px-6 text-center relative z-10">
-            <h2 class="font-serif text-3xl md:text-4xl text-white mb-2">Prefere um orçamento personalizado?</h2>
+            <h2 class="font-serif text-3xl md:text-4xl text-white mb-2">Prefere um atendimento personalizado?</h2>
             <p class="text-gray-400 mb-10">Preencha abaixo e entraremos em contato imediatamente pelo WhatsApp.</p>
             
             <form id="contact-form" class="glass-panel p-8 rounded-2xl text-left space-y-5 shadow-2xl">
@@ -169,9 +169,9 @@
     <footer class="bg-black py-10 text-center border-t border-white/10">
         <h2 class="font-serif text-xl font-bold text-white mb-4">AARTI <span class="text-brand-yellow">STUDIO</span></h2>
         <div class="flex justify-center space-x-6 mb-6">
-            <a href="#" class="text-gray-400 hover:text-brand-yellow transition text-xl"><i class="fab fa-instagram"></i></a>
-            <a href="#" class="text-gray-400 hover:text-brand-yellow transition text-xl"><i class="fab fa-behance"></i></a>
-            <a href="#" class="text-gray-400 hover:text-brand-yellow transition text-xl"><i class="fab fa-linkedin"></i></a>
+            <a href="https://www.instagram.com/aartiestudio_?igsh=MWxlb2wwc2ZocXo5Zg==" target="_blank" class="text-gray-400 hover:text-brand-yellow transition text-xl">
+                <i class="fab fa-instagram"></i>
+            </a>
         </div>
         <p class="text-gray-600 text-sm">© 2025 AARTI STUDIO. Todos os direitos reservados.</p>
     </footer>
@@ -214,7 +214,7 @@
                 <p id="zoom-desc" class="text-gray-300 leading-relaxed mb-8 text-lg"></p>
 
                 <a id="zoom-btn" href="#" target="_blank" class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white font-bold py-4 rounded-xl transition shadow-lg shadow-green-900/20 transform hover:-translate-y-1 text-lg">
-                    <i class="fab fa-whatsapp"></i> Contratar Agora
+                    <i class="fab fa-whatsapp"></i> Entrar em Contato
                 </a>
                 
                 <div class="mt-6 text-center">
@@ -239,7 +239,6 @@
                 grid.innerHTML = ''; 
 
                 services.forEach((service, index) => {
-                    // Texto do Whatsapp sem o preço
                     const textoSimples = `Olá! Tenho interesse no serviço: ${service.name}`;
                     const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(textoSimples)}`;
                     
@@ -270,7 +269,7 @@
                             <div class="w-full h-px bg-white/5 mb-6"></div>
 
                             <a href="${whatsappLink}" target="_blank" class="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-green-900/20 transform hover:-translate-y-1">
-                                <i class="fab fa-whatsapp text-xl"></i> Contratar Agora
+                                <i class="fab fa-whatsapp text-xl"></i> Entrar em Contato
                             </a>
                         </div>
                     `;
@@ -291,8 +290,7 @@
             document.getElementById('zoom-title').innerText = service.name;
             document.getElementById('zoom-desc').innerText = service.description;
 
-            // Texto do Whatsapp sem o preço na Modal
-            const texto = `Olá! Vi os detalhes de *${service.name}* e quero contratar.`;
+            const texto = `Olá! Vi os detalhes de *${service.name}* e gostaria de conversar sobre.`;
             document.getElementById('zoom-btn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(texto)}`;
 
             const modal = document.getElementById('zoom-modal');
@@ -356,7 +354,7 @@
                 });
 
                 const textoZap = 
-`✨ *Novo Orçamento Personalizado*
+`✨ *Novo Contato pelo Site*
 
 👤 *Cliente:* ${name}
 📱 *Tel:* ${phone}
