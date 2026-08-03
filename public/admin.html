@@ -142,9 +142,21 @@
             <form id="edit-service-form" class="space-y-4">
                 <input type="hidden" id="edit-svc-id">
                 
+<<<<<<< HEAD
                 <div>
                     <label class="text-xs text-gray-500 uppercase font-bold ml-1">Nome do Serviço</label>
                     <input type="text" id="edit-svc-name" required class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow focus:outline-none transition">
+=======
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase font-bold ml-1">Nome do Serviço</label>
+                        <input type="text" id="edit-svc-name" required class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow focus:outline-none transition">
+                    </div>
+                    <div>
+                        <label class="text-xs text-gray-500 uppercase font-bold ml-1">Preço / Valor</label>
+                        <input type="text" id="edit-svc-price" required class="w-full bg-black/40 border border-white/10 rounded-lg p-3 text-white focus:border-brand-yellow focus:outline-none transition">
+                    </div>
+>>>>>>> 00f8fa34ae17813e247a724c9dc1850c4ad91ab6
                 </div>
 
                 <div>
@@ -266,9 +278,16 @@
             reader.readAsDataURL(file);
         });
 
+<<<<<<< HEAD
         function openEditModal(id, name, description, icon, imageUrl) {
             document.getElementById('edit-svc-id').value = id;
             document.getElementById('edit-svc-name').value = name;
+=======
+        function openEditModal(id, name, price, description, icon, imageUrl) {
+            document.getElementById('edit-svc-id').value = id;
+            document.getElementById('edit-svc-name').value = name;
+            document.getElementById('edit-svc-price').value = price;
+>>>>>>> 00f8fa34ae17813e247a724c9dc1850c4ad91ab6
             document.getElementById('edit-svc-desc').value = description;
             document.getElementById('edit-svc-icon').value = icon;
             
@@ -292,7 +311,11 @@
             const id = document.getElementById('edit-svc-id').value;
             const payload = {
                 name: document.getElementById('edit-svc-name').value,
+<<<<<<< HEAD
                 price: "", // Enviado vazio para não quebrar o banco de dados
+=======
+                price: document.getElementById('edit-svc-price').value,
+>>>>>>> 00f8fa34ae17813e247a724c9dc1850c4ad91ab6
                 description: document.getElementById('edit-svc-desc').value,
                 image_url: document.getElementById('edit-svc-image-base64').value,
                 icon: document.getElementById('edit-svc-icon').value,
@@ -303,6 +326,10 @@
             btn.innerText = "Salvando...";
 
             try {
+<<<<<<< HEAD
+=======
+                // Aqui estamos fazendo um PUT para a API (lembre-se de configurar a rota no server.js)
+>>>>>>> 00f8fa34ae17813e247a724c9dc1850c4ad91ab6
                 const res = await fetch(`/api/admin/services/${id}`, {
                     method: 'PUT',
                     headers: {'Content-Type': 'application/json'},
@@ -366,7 +393,11 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
+<<<<<<< HEAD
                             <button onclick="openEditModal(${svc.id}, decodeURIComponent('${encodeURIComponent(svc.name)}'), decodeURIComponent('${encodeURIComponent(svc.description || '')}'), '${svc.icon}', '${svc.image_url}')" class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center hover:bg-blue-600 hover:text-white transition" title="Editar Serviço">
+=======
+                            <button onclick="openEditModal(${svc.id}, decodeURIComponent('${encodeURIComponent(svc.name)}'), decodeURIComponent('${encodeURIComponent(svc.price)}'), decodeURIComponent('${encodeURIComponent(svc.description || '')}'), '${svc.icon}', '${svc.image_url}')" class="w-8 h-8 rounded-full bg-blue-500/10 text-blue-500 flex items-center justify-center hover:bg-blue-600 hover:text-white transition" title="Editar Serviço">
+>>>>>>> 00f8fa34ae17813e247a724c9dc1850c4ad91ab6
                                 <i class="fas fa-pen text-xs"></i>
                             </button>
                             <button onclick="deleteService(${svc.id})" class="w-8 h-8 rounded-full bg-red-500/10 text-red-500 flex items-center justify-center hover:bg-red-600 hover:text-white transition" title="Excluir Serviço">

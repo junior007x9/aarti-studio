@@ -1,0 +1,29 @@
+# Dependências do Node.js
+node_modules/
+
+# Arquivos de ambiente (Segurança - NUNCA envie senhas para o GitHub)
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Arquivos de Banco de Dados (Caso use SQLite localmente)
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+
+# Logs de erro do Node
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+
+# Arquivos de sistema operacional (Mac/Windows)
+.DS_Store
+Thumbs.db
+
+# Pastas de configuração de editores (VS Code, etc)
+.vscode/
+.idea/
